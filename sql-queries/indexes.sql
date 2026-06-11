@@ -1,0 +1,10 @@
+CREATE INDEX ON posts (author_id);
+CREATE INDEX ON posts (reply_to_id);
+CREATE INDEX ON posts (created_at DESC);
+CREATE INDEX ON posts USING GIN (content_tsv);
+CREATE INDEX ON post_media (post_id);
+CREATE INDEX ON likes (post_id);
+CREATE INDEX ON follows (follower_id);
+CREATE INDEX ON follows (following_id);
+CREATE INDEX ON notifications (recipient_id, read);
+CREATE INDEX ON reports (status, created_at DESC);
