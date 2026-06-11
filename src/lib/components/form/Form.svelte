@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
-	import { formHandler } from '$lib/utils/form-helpers';
-	import type { FormConfig, TriggerUpdate } from '$lib/utils/form-types';
+	import { formHandler } from '$lib/form/utils/form-helpers';
+	import type { FormConfig, TriggerUpdate } from '$lib/form/utils/form-types';
 	import LoadingSpinner from '$lib/components/ui/LoadingSpinner.svelte';
 	import AvatarWidget from './AvatarWidget.svelte';
 	import Checkbox from '$lib/components/form/Checkbox.svelte';

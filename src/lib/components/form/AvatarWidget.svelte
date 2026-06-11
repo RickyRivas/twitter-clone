@@ -4,7 +4,7 @@
 		PUBLIC_CLOUDINARY_CLOUD_NAME,
 		PUBLIC_CLOUDINARY_UPLOAD_PRESET
 	} from '$env/static/public';
-	import type { InputAttributes, LabelConfig, FieldState } from '$lib/utils/form-types';
+	import type { InputAttributes, LabelConfig, FieldState } from '$lib/form/utils/form-types';
 	import ErrorMessage from '$lib/components/form/ErrorMessage.svelte';
 	import Avatar from '$lib/components/ui/Avatar.svelte';
 

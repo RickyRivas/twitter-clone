@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { InputAttributes, LabelConfig, FieldState } from '$lib/utils/form-types';
+	import type { InputAttributes, LabelConfig, FieldState } from '$lib/form/utils/form-types';
 	import ErrorMessage from '$lib/components/form/ErrorMessage.svelte';
 	const {
 		configuration,
