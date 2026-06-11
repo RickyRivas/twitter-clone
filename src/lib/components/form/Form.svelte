@@ -1,0 +1,88 @@
+<script lang="ts">
+	import { enhance } from '$app/forms';
+	import { formHandler } from '$lib/utils/form-helpers';
+	import type { FormConfig, TriggerUpdate } from '$lib/utils/form-types';
+	import LoadingSpinner from '$lib/components/ui/LoadingSpinner.svelte';
+	import AvatarWidget from './AvatarWidget.svelte';
+	import Checkbox from '$lib/components/form/Checkbox.svelte';
+	import CheckboxGroup from '$lib/components/form/CheckboxGroup.svelte';
+	import TextInput from '$lib/components/form/TextInput.svelte';
+	import FormSelect from '$lib/components/form/SelectInput.svelte';
+	import FormTextarea from '$lib/components/form/FormTextArea.svelte';
+	import HiddenInput from '$lib/components/form/HiddenInput.svelte';
+	import RadioGroup from '$lib/components/form/RadioGroup.svelte';
+	import ErrorMessage from '$lib/components/form/ErrorMessage.svelte';
+
+	const {
+		config,
+		name,
+		clearOnSuccess = false,
+		triggerUpdate,
+		onSuccess,
+		classes = ['default-styling']
+	}: {
+		config: FormConfig;
+		name: string;
+		clearOnSuccess?: boolean;
+		triggerUpdate: TriggerUpdate;
+		onSuccess?: (result: any) => void | Promise<void>;
+		classes?: string[];
+	} = $props();
+
+	const { formState, fieldDefinitions, formAttributes } = config;
+
+	const fieldComponents: Record<string, any> = {
+		text: TextInput,
+		email: TextInput,
+		password: TextInput,
+		tel: TextInput,
+		phone: TextInput,
+		date: TextInput,
+		number: TextInput,
+		time: TextInput,
+		url: TextInput,
+		textarea: FormTextarea,
+		'radio-group': RadioGroup,
+		checkbox: Checkbox,
+		'checkbox-group': CheckboxGroup,
+		select: FormSelect,
+		hidden: HiddenInput,
+		'avatar-widget': AvatarWidget
+	};
+</script>
+
+<form
+	{...formAttributes}
+	use:enhance={formHandler(config, onSuccess, clearOnSuccess)}
+	class={classes.join(' ')}
+	data-form-name={name}
+>
+	{#each fieldDefinitions as { fieldState, configuration }, index (configuration.inputAttributes.name)}
+		{@const Component = fieldComponents[configuration.inputAttributes.type]}
+		{#if Component}
+			<Component {configuration} {fieldState} {index} {triggerUpdate} />
+		{/if}
+	{/each}
+
+	{#if formState.statusMessage && formState.hasError}
+		<ErrorMessage errorMessage={formState.statusMessage} />
+	{/if}
+
+	<button
+		class="btn"
+		disabled={formState.isDisabled}
+		class:error={formState.hasError}
+		class:success={formState.showSuccess}
+	>
+		{#if formState.isLoading}
+			<LoadingSpinner
+				dim={44}
+				loading={formState.isLoading}
+				success={formState.showSuccess}
+				error={formState.hasError}
+			/>
+		{:else}
+			<span>{formState.submitButtonText}</span>
+		{/if}
+	</button>
+</form>
