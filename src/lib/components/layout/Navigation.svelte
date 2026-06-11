@@ -1,11 +1,11 @@
 <script lang="ts">
 	import { page } from '$app/state';
-	// import { authPrompt } from '$lib/state/authPrompt.svelte';
+	import { authPrompt } from '$lib/state/authPrompt.svelte';
 	import SquareIcon from '$lib/components/ui/SquareIcon.svelte';
-	// import NavigationSettingsDropdown from './NavigationSettingsDropdown.svelte';
 	import ThemeToggle from '$lib/components/ui/ThemeToggle.svelte';
 	import { getNavRoutes } from '$lib/navigation';
 	import Logo from '../logo.svelte';
+	import UserMenu from '../ui/UserMenu.svelte';
 
 	const navRoutes = getNavRoutes('public', 'protected');
 
@@ -17,7 +17,6 @@
 	let minimize = $state(false);
 
 	const toggleNav = () => (isActive = !isActive);
-	const logout = async () => await page.data.supabase.auth.signOut();
 
 	function isRoutActive(path: string): boolean {
 		if (path === '/') return pathname === '/';
@@ -27,14 +26,14 @@
 	function handleNavClick(e: MouseEvent, path: string) {
 		if (!session && path === '/notifications') {
 			e.preventDefault();
-			// authPrompt.show();
+			authPrompt.show();
 		}
 	}
 
 	function handleComposeClick(e: MouseEvent) {
 		if (!session) {
 			e.preventDefault();
-			// authPrompt.show();
+			authPrompt.show();
 		}
 	}
 </script>
@@ -78,12 +77,12 @@
 
 		<div class="mod">
 			<!-- compose -->
-			{#if session && profile}
+			<!-- {#if session && profile}
 				<a href="/compose/post" class="btn compose-btn" onclick={handleComposeClick}>
 					<SquareIcon name="compose" />
 					<span class="cta">Post</span>
 				</a>
-			{/if}
+			{/if} -->
 
 			<button
 				class="collapse-toggle btn"
@@ -94,16 +93,10 @@
 			</button>
 
 			{#if session && profile}
-				<!-- <NavigationSettingsDropdown
-					name={profile.display_name ?? profile.username}
-					email={session.user.email}
-					avatarPublicId={profile.avatar_public_id}
-					onlogout={logout}
-				/> -->
-				<!-- dropdown -->
+				<UserMenu />
 			{:else}
 				<nav class="actions">
-					<ul class:active={isActive}>
+					<ul>
 						<li><a href="/login" class="btn">Log In</a></li>
 						<li><a href="/register" class="btn">Register</a></li>
 					</ul>

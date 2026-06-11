@@ -1,12 +1,13 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { invalidate } from '$app/navigation';
+	import { Toaster } from 'svelte-sonner';
+	import AuthPromptModal from '$lib/components/auth/AuthPromptModal.svelte';
 	import type { LayoutProps } from './$types';
 	const { children, data }: LayoutProps = $props();
 	const { supabase, session } = data;
 
 	import './styles.less';
-	import Navigation from '$lib/components/layout/Navigation.svelte';
 
 	onMount(() => {
 		// Set up auth state listener
@@ -40,8 +41,7 @@
 	</script>
 </svelte:head>
 
-<Navigation />
+{@render children()}
 
-<main>
-	{@render children()}
-</main>
+<AuthPromptModal />
+<Toaster />
