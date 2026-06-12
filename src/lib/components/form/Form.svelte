@@ -12,6 +12,8 @@
 	import HiddenInput from '$lib/components/form/HiddenInput.svelte';
 	import RadioGroup from '$lib/components/form/RadioGroup.svelte';
 	import ErrorMessage from '$lib/components/form/ErrorMessage.svelte';
+	import ImageUpload from './ImageUpload.svelte';
+	import UsernameCheck from './UsernameCheck.svelte';
 
 	const {
 		config,
@@ -47,7 +49,9 @@
 		'checkbox-group': CheckboxGroup,
 		select: FormSelect,
 		hidden: HiddenInput,
-		'avatar-widget': AvatarWidget
+		'avatar-widget': AvatarWidget,
+		'image-upload': ImageUpload,
+		'username-check': UsernameCheck
 	};
 </script>
 
@@ -60,7 +64,21 @@
 	{#each fieldDefinitions as { fieldState, configuration }, index (configuration.inputAttributes.name)}
 		{@const Component = fieldComponents[configuration.inputAttributes.type]}
 		{#if Component}
-			<Component {configuration} {fieldState} {index} {triggerUpdate} />
+			{#if configuration.inputAttributes.type === 'image-upload'}
+				<Component
+					{configuration}
+					{fieldState}
+					{index}
+					{triggerUpdate}
+					onchange={(file, publicId, folder) => {
+						(configuration.inputAttributes as any)._file = file;
+						(configuration.inputAttributes as any)._folder = folder;
+						(configuration.inputAttributes as any).value = publicId ?? '';
+					}}
+				/>
+			{:else}
+				<Component {configuration} {fieldState} {index} {triggerUpdate} />
+			{/if}
 		{/if}
 	{/each}
 

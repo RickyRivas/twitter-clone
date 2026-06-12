@@ -12,27 +12,32 @@
 		configuration,
 		fieldState
 	}: {
-		configuration: { inputAttributes: InputAttributes; labelConfig: LabelConfig };
+		configuration: {
+			inputAttributes: InputAttributes & { previewShape?: 'circle' | 'banner' };
+			labelConfig: LabelConfig;
+		};
 		fieldState: FieldState;
 	} = $props();
 
-	// public_id of the uploaded avatar — drives the hidden input and preview
-	let publicId = $state(configuration.inputAttributes.value?.toString() ?? null);
-
+	// local state — driven by widget callback, not tied to config props
+	let publicId = $state(configuration.inputAttributes.value?.toString() || null);
 	let uploadWidget: any;
 
-	function cldCallback(error: any, result: any) {
-		if (error) return;
-		if (result.event === 'success') {
-			publicId = result.info.public_id;
-		}
-	}
+	const isBanner = $derived(configuration.inputAttributes.previewShape === 'banner');
 
-	function uploadAvatar() {
+	const previewSrc = $derived(
+		publicId
+			? isBanner
+				? `https://res.cloudinary.com/${PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload/w_1500,h_500,c_fill,f_auto,q_auto/${publicId}`
+				: `https://res.cloudinary.com/${PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload/w_160,h_160,c_fill,f_auto,q_auto/${publicId}`
+			: null
+	);
+
+	function openWidget() {
 		uploadWidget?.open();
 	}
 
-	function removeAvatar() {
+	function remove() {
 		publicId = null;
 	}
 
@@ -42,9 +47,18 @@
 				uploadWidget = window.cloudinary.createUploadWidget(
 					{
 						cloudName: PUBLIC_CLOUDINARY_CLOUD_NAME,
-						uploadPreset: PUBLIC_CLOUDINARY_UPLOAD_PRESET
+						uploadPreset: PUBLIC_CLOUDINARY_UPLOAD_PRESET,
+						multiple: false,
+						cropping: true,
+						croppingAspectRatio: isBanner ? 3 : 1,
+						resourceType: 'image'
 					},
-					cldCallback
+					(error: any, result: any) => {
+						if (error) return;
+						if (result.event === 'success') {
+							publicId = result.info.public_id;
+						}
+					}
 				);
 			}
 		}
@@ -53,26 +67,35 @@
 	});
 </script>
 
-<div class="form-control">
-	<label>
-		{configuration.labelConfig.text}
-		<!-- hidden input carries public_id into the form submission -->
-		<input
-			type="hidden"
-			name={configuration.inputAttributes.name}
-			value={publicId ?? ''}
-			required={configuration.inputAttributes.required}
-		/>
-	</label>
+<div class="form-control avatar-widget" class:is-banner={isBanner}>
+	<span class="avatar-widget-label">{configuration.labelConfig.text}</span>
 
-	<div class="avatar-preview">
-		<Avatar {publicId} alt="Avatar preview" size={40} />
+	<div class="avatar-widget-preview">
+		{#if previewSrc}
+			<img src={previewSrc} alt={configuration.labelConfig.text} />
+		{:else if !isBanner}
+			<Avatar publicId={null} alt="Avatar preview" size={80} />
+		{:else}
+			<div class="avatar-widget-banner-placeholder"></div>
+		{/if}
 	</div>
 
-	<button onclick={uploadAvatar} type="button" class="btn">Upload Image</button>
-	<button onclick={removeAvatar} type="button" class="btn" disabled={!publicId}>
-		Remove Image
-	</button>
+	<div class="avatar-widget-actions">
+		<button type="button" class="btn" onclick={openWidget}>
+			Upload {configuration.labelConfig.text}
+		</button>
+		{#if publicId}
+			<button type="button" class="btn btn-ghost" onclick={remove}>Remove</button>
+		{/if}
+	</div>
+
+	<!-- hidden input carries public_id into form submission — driven by local $state -->
+	<input
+		type="hidden"
+		name={configuration.inputAttributes.name}
+		value={publicId ?? ''}
+		required={configuration.inputAttributes.required}
+	/>
 
 	{#if fieldState.hasError && fieldState.statusMessage}
 		<ErrorMessage errorMessage={fieldState.statusMessage} />

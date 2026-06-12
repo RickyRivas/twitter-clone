@@ -18,6 +18,9 @@
 	const isOwner = $derived(data.isOwner);
 
 	let composerOpen = $derived(!!page.state.compose);
+
+	let settingsOpen = $derived(!!page.state.settingsProfile);
+	import SettingsProfileForm from '$lib/components/settings/SettingsProfileForm.svelte';
 </script>
 
 <svelte:head>
@@ -54,7 +57,12 @@
 			/>
 			<div class="profile-header-actions">
 				{#if isOwner}
-					<a href="/settings/profile" class="btn">Edit Profile</a>
+					<button
+						class="btn"
+						onclick={() => pushState('/settings/profile', { settingsProfile: true })}
+					>
+						Edit Profile
+					</button>
 				{:else}
 					<FollowButton profileId={visitedProfile.id} {isFollowing} />
 				{/if}
@@ -79,7 +87,9 @@
 			<div class="profile-meta">
 				{#if visitedProfile.location}
 					<span class="profile-meta-item">
-						<!-- <SquareIcon name="location" /> -->
+						<span class="icon">
+							<SquareIcon name="location" />
+						</span>
 						{visitedProfile.location}
 					</span>
 				{/if}
@@ -90,12 +100,16 @@
 						target="_blank"
 						rel="noopener noreferrer"
 					>
-						<!-- <SquareIcon name="link" /> -->
+						<span class="icon">
+							<SquareIcon name="link" />
+						</span>
 						{visitedProfile.website.replace(/^https?:\/\//, '')}
 					</a>
 				{/if}
 				<span class="profile-meta-item">
-					<!-- <SquareIcon name="calendar" /> -->
+					<span class="icon">
+						<SquareIcon name="calendar" />
+					</span>
 					Joined {new Date(visitedProfile.created_at).toLocaleDateString('en-US', {
 						month: 'long',
 						year: 'numeric'
@@ -149,3 +163,7 @@
 		{/snippet}
 	</Modal>
 {/if}
+
+<Modal id="settings-profile" open={settingsOpen} onclose={() => history.back()}>
+	<SettingsProfileForm onclose={() => history.back()} />
+</Modal>

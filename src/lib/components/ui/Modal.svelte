@@ -119,7 +119,7 @@
 	}
 </script>
 
-<div class="dialog-backdrop" class:active={open} bind:this={backdropNode}>
+<div class="dialog-backdrop" class:active={open} class:hidden={!open} bind:this={backdropNode}>
 	{#if open}
 		<div tabindex="0"></div>
 	{/if}
@@ -130,7 +130,6 @@
 		aria-labelledby={labelledby}
 		aria-describedby={describedby}
 		aria-modal="true"
-		class:hidden={!open}
 	>
 		{@render children?.({ close: closeModal, labelledby })}
 	</div>
@@ -139,36 +138,3 @@
 		<div tabindex="0"></div>
 	{/if}
 </div>
-
-<style>
-	.hidden {
-		display: none;
-	}
-
-	[role='dialog'] {
-		display: block;
-		padding: 1em;
-		background-color: var(--bg-alternate);
-		max-width: 800px;
-		width: 90%;
-	}
-
-	.dialog-backdrop {
-		display: none;
-		justify-content: center;
-		align-items: center;
-		position: fixed;
-		overflow-y: auto;
-		top: 0;
-		right: 0;
-		bottom: 0;
-		left: 0;
-		z-index: 9999;
-		background: rgb(0 0 0 / 80%);
-		min-height: 100vh;
-	}
-
-	.dialog-backdrop.active {
-		display: flex;
-	}
-</style>
