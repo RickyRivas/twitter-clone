@@ -21,6 +21,7 @@
 
 	let settingsOpen = $derived(!!page.state.settingsProfile);
 	import SettingsProfileForm from '$lib/components/settings/SettingsProfileForm.svelte';
+	import PostCards from '$lib/components/post/PostCards.svelte';
 </script>
 
 <svelte:head>
@@ -34,27 +35,37 @@
 </svelte:head>
 
 <div class="profile-page">
+	<div class="profile-page-header sticky-page-header">
+		<button class="btn btn-ghost back-btn" onclick={() => history.back()}>
+			<SquareIcon name="chevron-left" />
+			<span>Back</span>
+		</button>
+		<h2>{visitedProfile.display_name ?? visitedProfile.username}</h2>
+		<span class="divider"></span>
+		<span class="posts-count">{posts.length} Posts</span>
+	</div>
+
 	<!-- banner -->
 	<div class="profile-banner">
-		{#if visitedProfile.banner_public_id}
-			<img
-				src="https://res.cloudinary.com/{PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload/w_1500,h_500,c_fill,f_auto,q_auto/{visitedProfile.banner_public_id}"
-				alt="{visitedProfile.username} banner"
-				class="profile-banner-img"
-			/>
-		{:else}
-			<div class="profile-banner-placeholder"></div>
-		{/if}
+		<img
+			src={visitedProfile.banner_public_id
+				? 'https://res.cloudinary.com/{PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload/w_1500,h_500,c_fill,f_auto,q_auto/{visitedProfile.banner_public_id}'
+				: '/images/banner-placeholder.jpg'}
+			alt="{visitedProfile.username} banner"
+			class="profile-banner-img"
+		/>
 	</div>
 
 	<!-- profile header -->
 	<div class="profile-header">
 		<div class="profile-header-top">
-			<Avatar
-				publicId={visitedProfile.avatar_public_id}
-				alt={visitedProfile.display_name ?? visitedProfile.username}
-				size={80}
-			/>
+			<div class="profile-header-top-avatar">
+				<Avatar
+					publicId={visitedProfile.avatar_public_id}
+					alt={visitedProfile.display_name ?? visitedProfile.username}
+					size={80}
+				/>
+			</div>
 			<div class="profile-header-actions">
 				{#if isOwner}
 					<button
@@ -131,7 +142,7 @@
 	</div>
 
 	<!-- posts -->
-	<div class="profile-posts">
+	<PostCards>
 		{#if posts.length}
 			{#each posts as post (post.is_repost ? `repost-${post.id}` : post.id)}
 				<PostCard
@@ -148,7 +159,7 @@
 				<p>No posts yet.</p>
 			</div>
 		{/if}
-	</div>
+	</PostCards>
 </div>
 
 {#if page.state.compose}

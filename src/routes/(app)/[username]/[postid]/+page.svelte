@@ -23,11 +23,12 @@
 </svelte:head>
 
 <div class="post-page">
-	<div class="post-page-header">
-		<button class="btn-ghost back-btn" onclick={() => history.back()}>
-			<SquareIcon name="arrow-left" />
+	<div class="post-page-header sticky-page-header">
+		<button class="btn btn-ghost back-btn" onclick={() => history.back()}>
+			<SquareIcon name="chevron-left" />
 			<span>Back</span>
 		</button>
+		<h2>Post</h2>
 	</div>
 
 	<!-- root post -->

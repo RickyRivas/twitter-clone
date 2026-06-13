@@ -6,6 +6,8 @@
 
 <Navigation />
 
-<main>
-	{@render children()}
+<main class="app-main">
+	<div class="container">
+		{@render children()}
+	</div>
 </main>

@@ -1,6 +1,7 @@
 import type { PageServerLoad } from './$types';
 
-export const load: PageServerLoad = async ({ locals: { supabase, safeGetSession } }) => {
+export const load: PageServerLoad = async ({ locals: { supabase, safeGetSession }, depends }) => {
+    depends('app:feed');
     const { user } = await safeGetSession();
 
     const { data: forYouPosts, error: forYouError } = await supabase

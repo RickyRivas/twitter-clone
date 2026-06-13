@@ -47,9 +47,37 @@
 <div class="photo-page">
 	<!-- left: image viewer -->
 	<div class="photo-page-viewer">
-		<button class="btn-ghost photo-page-close" onclick={() => goto(`/${username}/${postId}`)}>
-			<SquareIcon name="close" />
-		</button>
+		<div class="photo-page-viewer-top-controls">
+			<button
+				class="btn btn-icon btn-ghost photo-page-close"
+				onclick={() => goto(`/${username}/${postId}`)}
+			>
+				<SquareIcon name="close" />
+			</button>
+
+			<div class="wrap">
+				<!-- prev / next -->
+				{#if hasPrev}
+					<button
+						class="btn btn-icon photo-page-nav prev"
+						onclick={() => navigateTo(currentIndex - 1)}
+						aria-label="Previous image"
+					>
+						<SquareIcon name="arrow-left" />
+					</button>
+				{/if}
+
+				{#if hasNext}
+					<button
+						class="btn btn-icon photo-page-nav next"
+						onclick={() => navigateTo(currentIndex + 1)}
+						aria-label="Next image"
+					>
+						<SquareIcon name="arrow-right" />
+					</button>
+				{/if}
+			</div>
+		</div>
 
 		<div class="photo-page-image-wrap">
 			<img
@@ -59,29 +87,8 @@
 			/>
 		</div>
 
-		<!-- prev / next -->
-		{#if hasPrev}
-			<button
-				class="photo-page-nav prev"
-				onclick={() => navigateTo(currentIndex - 1)}
-				aria-label="Previous image"
-			>
-				<SquareIcon name="arrow-left" />
-			</button>
-		{/if}
-
-		{#if hasNext}
-			<button
-				class="photo-page-nav next"
-				onclick={() => navigateTo(currentIndex + 1)}
-				aria-label="Next image"
-			>
-				<SquareIcon name="arrow-right" />
-			</button>
-		{/if}
-
 		<!-- dot indicators -->
-		{#if images.length > 1}
+		<!-- {#if images.length > 1}
 			<div class="photo-page-dots">
 				{#each images as img, i (img.id)}
 					<button
@@ -92,12 +99,12 @@
 					/>
 				{/each}
 			</div>
-		{/if}
+		{/if} -->
 	</div>
 
 	<!-- right: post + replies -->
 	<div class="photo-page-sidebar">
-		<PostCard {post} author={post.profiles} />
+		<PostCard {post} author={post.profiles} skipmedia={true} />
 
 		{#if session}
 			<div class="photo-page-composer">

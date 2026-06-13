@@ -12,7 +12,7 @@
     // text
     --heading: #1A1A1A;
     --text: #212121;
-    --text-secondary: #212121;
+    --text-faint: #8a8a88;
     --link: #c17a2e;
 
     // shadows
@@ -34,6 +34,11 @@
     // border
     --border-color: #e2e2e2;
     --border-radius: .2em;
+
+
+    // status
+    --warning: yellow;
+    --error: red;
 }
 
 :root.dark {
@@ -41,7 +46,7 @@
     // text
     --heading: #fff;
     --text: #fff;
-    --text-secondary: #ccc;
+    --text-faint: #6e6e6a;
     --link: #e8a84a;
 
     // shadows
@@ -73,6 +78,10 @@ body {
     min-height: 100vh;
     background-color: var(--bg);
     color: var(--text);
+
+    @media only screen and (min-width:1024px) {
+        overflow: visible;
+    }
 
     @media (min-width: 1300px) {
         font-size: 20px;
@@ -203,10 +212,13 @@ ul {
 
 .btn:not(.unstyled) {
     .buttonreset;
-    .ib;
+    .if;
+    .jc(center);
+    .ai(center);
+    gap: 3px;
     .va(top);
-    font-size: 16px;
-    line-height: 42px;
+    font-size: (16/20em);
+    line-height: (42/16);
     background-color: var(--secondary);
     padding: 0 1em;
     color: #fff;
@@ -217,15 +229,42 @@ ul {
     .rounded(var(--border-radius));
 
     .icon {
-        .ib;
-        .va(-.2em);
+        .show;
         width: 20px;
         height: auto;
+    }
+
+    &.btn-icon {
+        line-height: 44px;
+        padding: 0;
+        width: 44px;
+        height: 44px;
+
+        svg {
+            width: 100%;
+            height: auto;
+            vertical-align: 0;
+        }
+    }
+
+    &.btn-ghost {
+        background: none;
+        border: 1px solid var(--border-color);
+    }
+
+    &.btn-round {
+        border-radius: 50%;
+    }
+
+    &.btn--dim-30 {
+        width: (30em/16em);
+        height: (30em/16em);
     }
 
     &:hover,
     &:focus-visible,
     &.active,
+    &[aria-expanded="true"],
     &.open {
         background-color: var(--primary);
     }

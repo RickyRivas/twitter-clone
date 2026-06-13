@@ -7,6 +7,8 @@
 	} from '$env/static/public';
 	import Avatar from '$lib/components/ui/Avatar.svelte';
 	import SquareIcon from '$lib/components/ui/SquareIcon.svelte';
+	import LoadingSpinner from '../ui/LoadingSpinner.svelte';
+	import { toast } from 'svelte-sonner';
 
 	const { replyToId = null, onclose }: { replyToId?: string | null; onclose?: () => void } =
 		$props();
@@ -43,7 +45,7 @@
 			? 'var(--error)'
 			: charsLeft <= SHOW_COUNT_THRESHOLD
 				? 'var(--warning)'
-				: 'var(--primary)'
+				: 'var(--text)'
 	);
 
 	function autoResize() {
@@ -106,6 +108,7 @@
 
 		if (postError || !post) {
 			console.error('Post error:', postError);
+			toast.error('There was an error while posting.');
 			isSubmitting = false;
 			return;
 		}
@@ -123,6 +126,8 @@
 		text = '';
 		media = [];
 		isSubmitting = false;
+		toast.success('Posted!');
+
 		if (textarea) {
 			textarea.style.height = 'auto';
 		}
@@ -143,21 +148,20 @@
 	</div>
 
 	<div class="post-composer-body">
-		<div class="form-control">
-			<textarea
-				bind:this={textarea}
-				bind:value={text}
-				oninput={autoResize}
-				placeholder="What's happening?"
-				rows="1"
-				class="post-composer-textarea"
-				class:error={isOverLimit}
-				disabled={isSubmitting}
-			></textarea>
-		</div>
+		<textarea
+			bind:this={textarea}
+			bind:value={text}
+			oninput={autoResize}
+			placeholder="What's happening?"
+			rows="1"
+			class="post-composer-textarea"
+			class:error={isOverLimit}
+			disabled={isSubmitting}
+		></textarea>
+
 		<!-- media preview -->
 		{#if media.length > 0}
-			<div class="post-composer-media">
+			<div class="post-composer-media count-{media.length}">
 				{#each media as item, i (item.cloudinary_public_id)}
 					<div class="post-composer-media-item">
 						{#if item.resource_type === 'image'}
@@ -177,7 +181,7 @@
 							</div>
 						{/if}
 						<button
-							class="post-composer-media-remove"
+							class="btn btn-icon post-composer-media-remove"
 							onclick={() => removeMedia(i)}
 							aria-label="Remove media"
 							type="button"
@@ -193,7 +197,7 @@
 			<div class="post-composer-tools">
 				<!-- media upload -->
 				<button
-					class="post-composer-tool"
+					class="btn btn-icon post-composer-tool"
 					onclick={openMediaUpload}
 					disabled={media.length >= 4}
 					aria-label="Add media"
@@ -219,7 +223,7 @@
 								cx="15"
 								cy="15"
 								r={CIRCLE_RADIUS}
-								stroke="var(--border)"
+								stroke="var(--border-color)"
 								stroke-width="2"
 								fill="none"
 							/>
@@ -245,8 +249,19 @@
 					</div>
 				{/if}
 
-				<button class="btn post-composer-submit-btn" onclick={handleSubmit} disabled={!canSubmit}>
-					{isSubmitting ? 'Posting...' : 'Post'}
+				{#if showCircle}
+					<span class="divider"></span>
+				{/if}
+				<button
+					class="btn post-composer-submit-btn"
+					onclick={handleSubmit}
+					disabled={!canSubmit || isSubmitting}
+				>
+					{#if isSubmitting}
+						<LoadingSpinner loading={true} dim={18} /> Posting
+					{:else}
+						Post
+					{/if}
 				</button>
 			</div>
 		</div>

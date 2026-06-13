@@ -83,33 +83,36 @@
 </script>
 
 <div class="post-actions">
-	<button class="post-action reply" onclick={handleReply} aria-label="Reply">
-		<SquareIcon name="reply" />
-		{#if post.replies_count > 0}
-			<span class="post-action-count">{post.replies_count}</span>
-		{/if}
-	</button>
+	<div class="post-action">
+		<button class="reply" onclick={handleReply} aria-label="Reply">
+			<SquareIcon name="reply" />
+			{#if post.replies_count > 0}
+				<span class="post-action-count">{post.replies_count}</span>
+			{/if}
+		</button>
+	</div>
 
-	<button
-		class="post-action repost"
-		class:active={reposted}
-		onclick={toggleRepost}
-		aria-label="Repost"
-	>
-		<SquareIcon name="repost" />
-		{#if repostCount > 0}
-			<span class="post-action-count">{repostCount}</span>
-		{/if}
-	</button>
+	<div class="post-action">
+		<button class="repost" class:active={reposted} onclick={toggleRepost} aria-label="Repost">
+			<SquareIcon name="repost" />
+			{#if repostCount > 0}
+				<span class="post-action-count">{repostCount}</span>
+			{/if}
+		</button>
+	</div>
 
-	<button class="post-action like" class:active={liked} onclick={toggleLike} aria-label="Like">
-		<SquareIcon name="heart" />
-		{#if likeCount > 0}
-			<span class="post-action-count">{likeCount}</span>
-		{/if}
-	</button>
+	<div class="post-action">
+		<button class="like" class:active={liked} onclick={toggleLike} aria-label="Like">
+			<SquareIcon name="heart" />
+			{#if likeCount > 0}
+				<span class="post-action-count">{likeCount}</span>
+			{/if}
+		</button>
+	</div>
 
-	<button class="post-action share" onclick={handleShare} aria-label="Share">
-		<SquareIcon name="share" />
-	</button>
+	<div class="post-action">
+		<button class="share" onclick={handleShare} aria-label="Share">
+			<SquareIcon name="share" />
+		</button>
+	</div>
 </div>
